@@ -9,22 +9,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sattar.notes.R
 import com.sattar.notes.model.Note
 import com.sattar.notes.ui.theme.lightGray200
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Preview
 @Composable
-fun NotesScreen() {
+fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
+
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = { AppBar() },
-        content = { ScreenContent(it) }
+        content = { ScreenContent(it, state.notes) }
     )
 }
 
@@ -40,12 +46,7 @@ fun AppBar(){
 }
 
 @Composable
-fun ScreenContent(paddingValues: PaddingValues) {
-    val notes: List<Note> = listOf(
-        Note("Title1", "12:23"),
-        Note("Title2", "16:12"),
-        Note("Title3", "21:32")
-    )
+fun ScreenContent(paddingValues: PaddingValues, notes: List<Note>) {
     Card(
         modifier = Modifier
             .padding(paddingValues)
